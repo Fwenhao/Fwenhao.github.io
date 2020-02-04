@@ -93,18 +93,19 @@ service-worker: true
 
 
 # Friends
-# friends: [
-#     {
-#         title: "WY",
-#         href: "http://zhengwuyang.com"
-#     },{
-#         title: "简书·BY",
-#         href: "http://www.jianshu.com/u/e71990ada2fd"
-#     },{
-#         title: "Apple",
-#         href: "https://apple.com"
-#     },{
+ friends: [
+     {
+         title: "github.zjhChester",
+         href: "https://zjhchester.github.io"
+     },{
+         title: "CSDN·zjhChester",
+         href: "https://me.csdn.net/qq_38593205"
+     },{
+         title: "github.Fwenhao",
+         href: "https://Fwenhao.github.io"
+     }
+#,{
 #         title: "Apple Developer",
 #         href: "https://developer.apple.com/"
 #     }
-# ]
+ ]
