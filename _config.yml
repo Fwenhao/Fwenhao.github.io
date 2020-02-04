@@ -95,13 +95,13 @@ service-worker: true
 # Friends
  friends: [
      {
-         title: "github.zjhChester",
+         title: "github·zjhChester",
          href: "https://zjhchester.github.io"
      },{
          title: "CSDN·zjhChester",
          href: "https://me.csdn.net/qq_38593205"
      },{
-         title: "github.Fwenhao",
+         title: "github·Fwenhao",
          href: "https://Fwenhao.github.io"
      }
 #,{
