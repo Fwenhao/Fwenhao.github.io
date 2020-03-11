@@ -1,3 +1,11 @@
+---
+layout:     post
+author:     FB
+header-img: img/home-bg-o.jpg
+catalog: true
+tags:
+    - JDBC
+---
 # 关于JDBC的一些理解和总结
 
 **概念**：
