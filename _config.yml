@@ -1,10 +1,10 @@
-# Site settings
-title: Fwenhao Blog
-SEOTitle: Fwenhao | FB
+﻿# Site settings
+title: Fb Blog
+SEOTitle: Fb | 
 header-img: img/home-bg-o.jpg
 email: Fwenhao@gmail.com
 description:  A lovely javaer"
-keyword: "Fwenhao,tfswufe "
+keyword: "Fb,tfswufe,javaer"
 url: "http://Fwenhao.github.io"          # your host, for absolute URL
 baseurl: ""      # for example, '/blog' if your blog hosted on 'host/blog'
 github_repo: "https://github.com/Fwenhao/Fwenhao.github.io.git" # you code repository
@@ -12,14 +12,14 @@ github_repo: "https://github.com/Fwenhao/Fwenhao.github.io.git" # you code repos
 # Sidebar settings
 sidebar: true                           # whether or not using Sidebar.
 sidebar-about-description: "ppnn13% dkstFeb.1st "
-sidebar-avatar: /img/f3.jpg      # use absolute URL, seeing it's used in both `/` and `/about/`
+sidebar-avatar: /img/IMG_20190725_152317.jpg      # use absolute URL, seeing it's used in both `/` and `/about/`
 
 
 
 # SNS settings
 RSS: false
 # weibo_username:     
-zhihu_username:     zhang-xiao-pi-99
+#zhihu_username:     zhang-xiao-pi-99#
 github_username:    Fwenhao
 
 
@@ -58,8 +58,8 @@ kramdown:
 # Gitalk
 gitalk:
   enable: true    #是否开启Gitalk评论
-  clientID: 01efed37e802e018c620                            #生成的clientID
-  clientSecret: 0917c4b14a9c9cb0435471f8261e54632702d70f    #生成的clientSecret
+  clientID: 23d4dbea600633733315                            #生成的clientID
+  clientSecret: cf19db0ed824f8da0b727afe3159203d7551cf8b    #生成的clientSecret
   repo: Fwenhao.github.io    #仓库名称
   owner: Fwenhao    #github用户名
   admin: Fwenhao
@@ -93,19 +93,3 @@ service-worker: true
 
 
 # Friends
-# friends: [
-#     {
-#         title: "github·zjhChester",
-#         href: "https://zjhchester.github.io"
-#     },{
-#         title: "CSDN·zjhChester",
-#         href: "https://me.csdn.net/qq_38593205"
-#     },{
-#         title: "github·Fwenhao",
-#         href: "https://Fwenhao.github.io"
-#     }
-#,{
-#         title: "Apple Developer",
-#         href: "https://developer.apple.com/"
-#     }
- ]
