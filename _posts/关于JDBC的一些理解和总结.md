@@ -1,0 +1,274 @@
+# 关于JDBC的一些理解和总结
+
+**概念**：
+
+Java Database Connectivity   Java数据库连接，Java语言操作数据库
+
+Connection  数据库连接对象
+
+PreparedStatement   SQL执行对象
+
+ResultSet   结果集对象
+
+**JDBC的本质：**
+
+其实是sun公司定义的一套操作所有关系型数据库的规则，即接口。各个数据库厂商去实现这套接口，提供数据库启动jar包。我们可以使用这套**<u>接口</u>**（JDBC）编程，真正执行的代码是jar包中的<u>**实现类**</u>。
+
+例:
+
+~~~java
+//Game 接口    LOL、DNF类     通过接口去调用实现类
+Game g = new LOL();      g.play();
+~~~
+
+
+
+JDBC连接数据库：
+
+​	刚开始学的时候经常忘记步骤，其实多了几次之后发现完全就是自己没有理解到原理。现在回头看还是挺有意思的。
+
+**分为以下几个步骤：**
+
+## 1.注册加载JDBC驱动,把Driver装进JVM
+
+~~~java
+Class.forName("com.mysql.cj.jdbc.Driver");
+Class.forName("com.mysql.jdbc.Driver");
+
+com.mysql.jdbc.Driver 是 mysql-connector-java 5中的
+com.mysql.cj.jdbc.Driver 是 mysql-connector-java 6中的
+在mysql5+的版本中都要加上cj 
+~~~
+
+## 2.建立连接
+
+~~~java
+Connection conn = Drivermanager.getConnection(url,user,password);
+~~~
+
+url: mysql5 是只需要设置Unicode，Encoding和SSL; mysql5+版本则还需要设置serverTimezone的时区，必须设置为所在地区的
+
+~~~java
+String url = "jdbc:mysql://localhost:3306/boke?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=GMT";
+~~~
+
+## 3.建立容器，实例化statement/PreparedStatement
+
+~~~java
+Statement stmt = conn.createStatement();
+PreparedStatement ps = conn.prepareStatement(sql);
+~~~
+
+我把这个视为执行所有操作的容器。
+
+### **区别：**
+
+量比较小：二者差别不大
+
+量比较多：在PreparedStatement预编译空间范围之内，选择PreparedStatement，因为其只预编译一次sql语句
+
+量特别大，使用Statement，因为PrepareStatement的预编译空间有限，当数据量特别大时，会发生异常
+
+## 4.创立SQL语句，执行操作
+
+~~~java
+String sql = "sql语句";
+ResultSet res = stmt.executeQuery(sql);
+//executeQuery()方法会把数据库响应的查询结果存放在ResultSet类对象中供我们使用。由于是封装好了的对象  所以在取值的时候需要对应index
+while(res.next()){
+   String parameter1 = res.getString(1);
+   String parameter2 = res.getString(2);
+   String parameter3 = res.getString(3);
+   String parameter4 = res.getString(4);
+   String parameter5 = res.getString(5);
+    
+   //打包
+   User user = new User();
+   user.setName(parameter1);
+        。。。。。。。
+}
+~~~
+
+
+
+## 总结
+
+### 资源关闭
+
+每次调用完成后记得关闭资源
+
+~~~java
+public void close() throws SQLException {
+		if (conn != null)
+			conn.close();
+		if (stmt != null)
+			stmt.close();
+		if (rs != null)
+			rs.close();
+	}
+~~~
+
+
+
+### JDBC中，PreparedStatement相较于Statement有什么优点？
+
+1）PreparedStatement可以使用预编译的sql，而Statment只能使用静态的sql
+
+2）PreparedStatement可以使用sql缓存区，效率比Statment高
+
+3）PreparedStatement可以有效防止sql注入，而Statment不能防止sql注入。
+
+### SQL注入问题：
+
+​	指的是通过构建特殊的输入作为参数传入Web应用程序,而这些输入大都是SQL语法里的一些组合,通过执行SQL语句进而执行攻击者所要的操作,其主要原因是程序没有细致地过滤用户输入的数据,致使非法数据侵入系统。
+
+
+
+~~~java
+import java.io.IOException;
+import java.sql.*;
+import java.util.Properties;
+
+public class JdbcDemo {
+    /**1.导入驱动jar包
+     * 2.注册驱动
+     * 3.获取数据库连接对象
+     * 4.执行语句
+     * 5.得到结果集
+     * */
+    private Connection connection;
+    private PreparedStatement preparedStatement;
+    private ResultSet resultSet;
+
+    public void load() throws Exception {
+        try {
+            //加载驱动
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            Properties properties = new Properties();
+            //读取配置文件
+            properties.load(this.getClass().getClassLoader().getResourceAsStream("db.properties"));
+            //获取连接数据库对象
+            connection = DriverManager.
+                    getConnection(properties.getProperty("jdbc.url"),properties.getProperty("jdbc.username"),properties.getProperty("jdbc.password"));
+            //获取数据库预处理对象preparedStatement  并编写sql语句
+            preparedStatement = connection.prepareStatement("select * from user ");
+            //执行SQL语句并返回结果集
+            resultSet = preparedStatement.executeQuery();
+            //循环遍历结果集
+            while (resultSet.next()){
+                System.out.print(resultSet.getString("id")+"\t\t\t");
+                System.out.print(resultSet.getString("username")+"\t\t\t");
+                System.out.print(resultSet.getString("job")+"\t\t\t");
+                System.out.print(resultSet.getString("like")+"\t\t\t");
+                System.out.println();
+            }
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }catch (SQLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }finally {
+            //一定要记得    释放资源
+           try {
+               resultSet.close();
+               preparedStatement.close();
+               connection.close();
+           }catch (SQLException e){
+               e.printStackTrace();
+           }
+        }
+    }
+
+    public static void main(String[] args) throws Exception {
+        new JdbcDemo().load();
+    }
+}
+
+~~~
+
+
+
+# Mybatis的一些问题以及解决方式
+
+## 1.mapper配制（映射）
+
+namespace： mapper指定了唯一的命名空间（mapper.xml的路径）
+
+id：<select>元素在映射文件中唯一的标识（方法）
+
+parameterType：指定传入参数的类型
+
+resultType：指定返回结果的类型
+
+
+
+~~~java
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ //mapper的路径
+<mapper namespace="com.tenect.fwh.mapper">
+	<select id="selectCustomerById" resultType="com.tenect.po.Customer" parameterType="Integer">
+		select * from customer where id = #{id}
+	</select>
+	
+	<select id="selectCustomerByName" resultType="com.tenect.po.Customer" parameterType="String">
+		select * from customer where username like '%${value}%'
+	</select>
+	
+	<insert id="insertNewCustomer" parameterType="com.tenect.po.Customer">
+		insert into customer(username,job,phone) values(#{username},#{job},#{phone})
+	</insert>
+	<delete id="deleteCustomer" parameterType="Integer">
+		delete from customer where id = #{id}
+	</delete>
+	<update id="updateCustomer" parameterType="com.tenect.po.Customer">
+		update customer set username=#{username},job=#{job},phone=#{phone} where id=#{id}
+	</update>
+</mapper>
+~~~
+
+## 2.config核心配制文件
+
+~~~java
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+ PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-config.dtd">
+ // 所有元素的根元素 
+<configuration>
+// 环境信息 
+	<environments default="mysql">
+		<environment id="mysql">
+			<transactionManager type="JDBC" />
+			<dataSource type="POOLED">
+				<property name="driver" value="com.mysql.cj.jdbc.Driver" />
+				// 此处需要将&转义成&amp; 
+				<property name="url" value="jdbc:mysql://localhost:3306/mybatis_text?useUnicode=true&amp;characterEncoding=utf-8&amp;useSSL=false&amp;serverTimezone=GMT" />
+				<property name="username" value="root" />
+				<property name="password" value="xiaobing" />
+			</dataSource>
+		</environment>
+	</environments>
+	
+	<mappers>
+		<mapper resource="com/tenect/fwh/mapper.xml" />
+	</mappers>
+</configuration>
+~~~
+
+# 接口编程：
+
+## 四条规则：
+
+1、接口全路径----namespace
+
+2、方法名----id
+
+3、入参类型----parameterType
+
+4、返回值类型----resultType
+
+严格遵守四项原则
