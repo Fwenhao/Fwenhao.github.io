@@ -1,3 +1,15 @@
+---
+layout:     post
+title:      Linux学习总结
+subtitle:   常用基础和理论
+date:       2020-12-13
+author:     Fyyice
+header-img: img/post-bg-ios9-web.jpg
+catalog: 	 true
+tags:
+    - Linux
+---
+
 # Linux
 
 ## 系统结构目录
